@@ -1,0 +1,71 @@
+package protobuf;
+
+message Message {
+    enum MessageType {
+		INVALID_TYPE     	= 0;
+		WriteRow         	= 1;
+		DeleteRow        	= 2;
+		TransactionClose 	= 3;
+		RequestHealing   	= 4;
+		HealingComplete  	= 5;
+		StatusHeartbeat  	= 6;
+		CreateTable      	= 7;
+		DropTable        	= 8;
+		NoOp             	= 9;
+		UpdateRowWithPKMod  = 10;
+		TruncateTable       = 11;
+		DualNoOpForPKMod  	= 14;
+	}
+
+    enum OperationGenesis {
+		INVALID_GENESIS  = 0;
+		NewOperation     = 1;
+		HealingOperation = 2;
+	}
+
+    enum TransactionCloseType {
+		INVALID_TRANSCLOSE = 0;
+		Commit             = 1;
+		Rollback           = 2;
+	}
+
+    enum NodeConnectionState {
+		INVALID_NODECONNECTIONSTATE = 0;
+		Connected                   = 1;
+		Disconnected                = 2;
+	}
+
+	message NodeData {
+		optional uint64              node_update_count     = 1;
+		optional uint64              lamport_TS            = 2;
+		optional NodeConnectionState node_connection_state = 3;
+	}
+
+    enum HealingCompletionCode {
+		HEALING_EMPTY 				= 0;
+		HEALING_COMPLETE            = 1;
+		HEALING_PARTIAL            	= 2;
+	}
+
+	required MessageType          	type                         = 1;
+	optional OperationGenesis     	opgen                        = 2;
+	optional TransactionCloseType 	transCloseType               = 3;
+	optional string               	database	                 = 4;
+	optional bytes                	body                         = 5;
+	optional bytes                	key                          = 6;
+	optional uint64               	node_update_count            = 7;
+	optional uint64               	subsequent_node_update_count = 8;
+	optional uint64               	lamport_TS                   = 10;
+	optional uint64               	transaction_ID               = 11;
+	optional bytes               	createStatement              = 12; // Only needed when type=CreateTable
+	optional uint64               	wallclock_absolute_time      = 13;
+	repeated NodeData             	nodes                        = 14;
+	optional bytes                	extraData                    = 15;
+	optional HealingCompletionCode	returnCode                   = 16;
+	optional string               	node_set                     = 17;
+	optional uint64					heal_request_ID				 = 18;
+	optional bytes                	delete_key                   = 19;
+	optional uint64               	delete_node_update_count     = 20;
+	optional uint64               	delete_lamport_TS            = 21;
+	optional uint64					schemaId					 = 22;
+}
