@@ -1,0 +1,3 @@
+class timp {
+	timp();
+};

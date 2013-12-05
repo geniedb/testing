@@ -85,13 +85,42 @@ ENDIF()
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DUNIV_DEBUG -DUNIV_SYNC_DEBUG")
 
 #----------------------------------
+# Macros for collecting source files into a filter structure
 
-INCLUDE_DIRECTORIES	( ${CMAKE_SOURCE_DIR}/zmq )
+MACRO(SUBDIRLIST result curdir)
+  FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
+  SET(dirlist "")
+  FOREACH(child ${children})
+    IF(IS_DIRECTORY ${curdir}/${child})
+        SET(dirlist ${dirlist} ${child})
+    ENDIF()
+  ENDFOREACH()
+  SET(${result} ${dirlist})
+ENDMACRO()
+
+
+MACRO(IMPORT_SUBDIR project dirname)
+	MESSAGE("processing ${project}:${dirname}")
+	FILE(GLOB dir_src
+		${CMAKE_CURRENT_SOURCE_DIR}/${project}/${dirname}/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/${project}/${dirname}/*.cpp
+	)
+	SOURCE_GROUP(${dirname} FILES ${dir_src})
+	SUBDIRLIST(subdirs ${CMAKE_CURRENT_SOURCE_DIR}/${project}/${dirname})
+	FOREACH(subdir ${subdirs})
+		IMPORT_SUBDIR(${project} ${dirname}\\\\${subdir})
+	ENDFOREACH(subdir)
+ENDMACRO(IMPORT_SUBDIR)
+
+#----------------------------------
+
+IMPORT_SUBDIR( MsgFlood src )
+
 INCLUDE_DIRECTORIES	( ${CMAKE_BINARY_DIR}/Protobuf )
 
 ADD_SUBDIRECTORY ( Protobuf )
 
-FILE ( GLOB_RECURSE ZMQ_FILES zmq/* )
+FILE ( GLOB_RECURSE MSGFLOOD_FILES MsgFlood/* )
 
 SET ( PROTOBUF_SRC_FILES Protobuf/message.pb.cc )
 SET_SOURCE_FILES_PROPERTIES ( ${PROTOBUF_SRC_FILES} PROPERTIES GENERATED TRUE)
@@ -105,15 +134,15 @@ IF( CMAKE_SYSTEM_NAME MATCHES Linux)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 ENDIF( CMAKE_SYSTEM_NAME MATCHES Linux)
 
-ADD_EXECUTABLE(zmq 
-	${ZMQ_FILES}
+ADD_EXECUTABLE(MsgFlood 
+	${MSGFLOOD_FILES}
 	${PROTOBUF_SRC_FILES}
 	)
 
-ADD_DEPENDENCIES (zmq Protobuf)
+#ADD_DEPENDENCIES (MsgFlood Protobuf)
 
-TARGET_LINK_LIBRARIES( zmq ${PROTOBUF_LIBRARIES} )
-LINK_DIRECTORIES( ${PROTOBUF_LIBRARY_PATHS_ALL} )
+#TARGET_LINK_LIBRARIES( MsgFlood ${PROTOBUF_LIBRARIES} )
+#LINK_DIRECTORIES( ${PROTOBUF_LIBRARY_PATHS_ALL} )
 
 
 IF(NOT DEFINED LIBDIR)
@@ -121,7 +150,7 @@ IF(NOT DEFINED LIBDIR)
 ENDIF()
 SET(LIBDIR ${LIBDIR} CACHE STRING "lib directory (lib or lib64)")
 
-INSTALL(TARGETS zmq
+INSTALL(TARGETS MsgFlood
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION ${LIBDIR}
 	ARCHIVE DESTINATION ${LIBDIR})
