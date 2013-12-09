@@ -81,7 +81,7 @@ int main (int argc, char *argv[])
 
 		if (subConnected && pubConnected) {
 			boost::thread testThread(doSomething);
-			boost::posix_time::time_duration startupPause = boost::posix_time::microseconds(5000);
+			boost::posix_time::time_duration startupPause = boost::posix_time::microseconds(500);
 			boost::this_thread::sleep(startupPause);
 
 			testThread.interrupt();
