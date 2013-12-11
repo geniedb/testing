@@ -10,7 +10,7 @@
 #include "CF_Platform.h"
 #include "getopt.h"
 
-const char* optString = "i:p:s:S?x";
+const char* optString = "i:p:s:S?xt";
 
 struct Settings_t {
 	std::string pubAddress;
