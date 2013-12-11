@@ -48,8 +48,8 @@ void doSomething() {
 		
 	std::string url(Genie::stringf("tcp://%s:%d", Settings.subAddress.c_str(), Settings.port).c_str());
 	subSocket->connect(url.c_str());
-		boost::posix_time::time_duration startupPause = boost::posix_time::microseconds(1000);
-	    boost::this_thread::sleep(startupPause);
+	boost::posix_time::time_duration startupPause = boost::posix_time::microseconds(1000);
+	boost::this_thread::sleep(startupPause);
 	bool subConnected = subSocket->connected();
 	//subSocket->
 	std::cout << Genie::stringf("Subscribe socket %sconnected to %s\n", subConnected ? "" : "not ", url.c_str());
@@ -76,7 +76,7 @@ void doSomething() {
 
 	// receive message loop
 		std::cout << "8\n";
-	zmq::pollitem_t pollitem[] = { {subSocket, 0, ZMQ_POLLIN, 0} };
+	zmq::pollitem_t pollitem[] = { {(void*)*subSocket, 0, ZMQ_POLLIN, 0} };
 		std::cout << "9\n";
 		std::cout << "10\n";
 	int pollCount = 0;
@@ -95,10 +95,10 @@ void doSomething() {
 		try {
 			subConnected = subSocket->connected();
 			std::cout << Genie::stringf("Subscribe socket %sconnected to %s\n", subConnected ? "" : "not ", url.c_str());
-			pollCount = zmq::poll(&pollitem[0], 1, 100);
-		} catch (int err) {
+			pollCount = zmq::poll(pollitem, 1, 100);
+		} catch (zmq::error_t err) {
 			//ETERM,EFAULT, EINTR
-			std::cout << "Error: " << err << "\n";
+			std::cout << "Error: " << err.what() << "\n";
 
 		}
 		std::cout << "1\n";
