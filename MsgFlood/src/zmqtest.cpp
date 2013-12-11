@@ -20,22 +20,24 @@ struct Settings_t {
 	bool sendKill;
 	double maxLifetime;
 	int hwm;
+	bool testModeSend;
 } Settings;
 
 void freeMe(void* item, void* hint) {
 	delete[] item;
 }
 
-void doSomething() {//zmq::socket_t* pubSocket, zmq::socket_t* subSocket) {
+void doSomething() {
 	
 	zmq::context_t	context(1);
 	zmq::socket_t* pubSocket = new zmq::socket_t(context, ZMQ_PUB);
 	pubSocket->setsockopt(ZMQ_SNDHWM, &Settings.hwm, sizeof(Settings.hwm));
 	zmq::socket_t* subSocket = new zmq::socket_t(context, ZMQ_SUB);
+
 	subSocket->setsockopt( ZMQ_RCVHWM, &Settings.hwm, sizeof(Settings.hwm) );
 	int linger = 0;
 	subSocket->setsockopt( ZMQ_LINGER, &linger, sizeof(linger) );
-	subSocket->setsockopt(ZMQ_SUBSCRIBE, "x", 1);
+	subSocket->setsockopt(ZMQ_SUBSCRIBE, "x", 1); 
 	
 	bool pubConnected = false;
 	if (Settings.pubAddress != "") {
@@ -46,27 +48,33 @@ void doSomething() {//zmq::socket_t* pubSocket, zmq::socket_t* subSocket) {
 		
 	subSocket->connect(Genie::stringf("tcp://%s:%d", Settings.subAddress.c_str(), Settings.port).c_str());
 	bool subConnected = subSocket->connected();
+	//subSocket->
 	std::cout << Genie::stringf("Subscribe socket %sconnected to %s\n", subConnected ? "" : "not ", Genie::stringf("tcp://%s:%d", Settings.subAddress.c_str(), Settings.port).c_str());
 
-
 	time_t startTime = time(NULL);
-	for (int i = 0;i < 10;i++) {
-		boost::this_thread::interruption_point();
-		std::cout << "doing something";
-		
-		//char* data = new char[1000];
-
-		//zmq::message_t zmqmsg((void *)data, 1000, freeMe);
-		//pubSocket->send(zmqmsg);
+	double lastRunTime = 0;
+	int count = 1;
+	if (Settings.testModeSend) {
+		for (;;) {
+			boost::this_thread::interruption_point();
+			time_t currTime;
+			time(&currTime);
+			double runTime = difftime(currTime, startTime);
+			if (runTime - lastRunTime > 2) {
+				char* data = new char[1000];
+				zmq::message_t zmqmsg((void *)data, 1000, freeMe);
+				pubSocket->send(zmqmsg);
+				lastRunTime = runTime;
+				std::cout << "sending msg " << count++ << "\n";
+			}		
+		}
 	}
 		std::cout << "7\n";
 
 	// receive message loop
-	//std::vector<zmq::pollitem_t> subscribePollItems;
 		std::cout << "8\n";
 	zmq::pollitem_t pollitem = {static_cast<void*>(subSocket), 0, ZMQ_POLLIN, 0};
 		std::cout << "9\n";
-	//subscribePollItems.push_back(pollitem);
 		std::cout << "10\n";
 	int pollCount;
 		std::cout << "11\n";
@@ -75,7 +83,6 @@ void doSomething() {//zmq::socket_t* pubSocket, zmq::socket_t* subSocket) {
 		std::cout << "12\n";
 		time(&currTime);
 		std::cout << "13\n";
-		Sleep(10000);
 		double runTime = difftime(startTime, currTime);
 		std::cout << "14\n";
 		if (runTime > Settings.maxLifetime)
@@ -116,6 +123,7 @@ void print_usage() {
 	std::cout << "-s         : subscribe ip\n";
 	std::cout << "-p         : port\n";
 	std::cout << "-S         : this node is the subscriber\n";
+	std::cout << "-t         : this node will open a pub socket and send a message every 2 seconds\n";
 	std::cout << "-x         : connect to publish socket and send kill command\n";
 }
 
@@ -127,6 +135,7 @@ int getOptions(int argc, char *argv[]) {
 	Settings.sendKill = false;
 	Settings.maxLifetime = 180;
 	Settings.hwm = 100000;
+	Settings.testModeSend =false;
 	int opt = getopt(argc, argv, optString);
     while( opt != -1 ) {
 		switch( opt ) {
@@ -148,6 +157,9 @@ int getOptions(int argc, char *argv[]) {
 				break;
 			case 'x':
 				Settings.sendKill = true;
+				break;
+			case 't':
+				Settings.testModeSend = true;
 				break;
         }        
         opt = getopt( argc, argv, optString );
