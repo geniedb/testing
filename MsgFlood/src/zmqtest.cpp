@@ -51,7 +51,6 @@ void doSomething() {
 	boost::posix_time::time_duration startupPause = boost::posix_time::microseconds(1000);
 	boost::this_thread::sleep(startupPause);
 	bool subConnected = subSocket->connected();
-	//subSocket->
 	std::cout << Genie::stringf("Subscribe socket %sconnected to %s\n", subConnected ? "" : "not ", url.c_str());
 
 	time_t startTime = time(NULL);
@@ -72,52 +71,36 @@ void doSomething() {
 			}		
 		}
 	}
-		std::cout << "7\n";
 
-	// receive message loop
-		std::cout << "8\n";
 	zmq::pollitem_t pollitem[] = { {(void*)*subSocket, 0, ZMQ_POLLIN, 0} };
-		std::cout << "9\n";
-		std::cout << "10\n";
 	int pollCount = 0;
-		std::cout << "11\n";
 	for (;;) {
 		time_t currTime;
-		std::cout << "12\n";
 		time(&currTime);
-		std::cout << "13\n";
 		//Sleep(10000);
 		double runTime = difftime(startTime, currTime);
-		std::cout << "14\n";
 		if (runTime > Settings.maxLifetime)
 			break;
-		std::cout << "15\n";
 		try {
 			subConnected = subSocket->connected();
-			std::cout << Genie::stringf("Subscribe socket %sconnected to %s\n", subConnected ? "" : "not ", url.c_str());
+			//std::cout << Genie::stringf("Subscribe socket %sconnected to %s\n", subConnected ? "" : "not ", url.c_str());
 			pollCount = zmq::poll(pollitem, 1, 100);
 		} catch (zmq::error_t err) {
 			//ETERM,EFAULT, EINTR
 			std::cout << "Error: " << err.what() << "\n";
 
 		}
-		std::cout << "1\n";
 		if (pollCount == 0)
 			continue;
 		zmq::message_t msg;
-		std::cout << "2\n";
 		subSocket->recv(&msg);
-		std::cout << "3\n";
 		std::string messageStr((char*)msg.data());
-		std::cout << "4\n";
 		std::cout << messageStr << "\n";
-		std::cout << "5\n";
 		if (messageStr == "shutdown")
 			break;
-		std::cout << "6\n";
 	}
-	//if (pubSocket)
-	//	pubSocket->close();
+	if (pubSocket)
+		pubSocket->close();
 	if (subSocket)
 		subSocket->close();
 	context.close();
@@ -173,8 +156,6 @@ int getOptions(int argc, char *argv[]) {
 	return 0;
 }
 
-const char* SHUTDOWN = "shutdown";
-
 int main (int argc, char *argv[])
 {
 	if (getOptions(argc, argv))
@@ -193,7 +174,11 @@ int main (int argc, char *argv[])
 			pubSocket->bind( Genie::stringf("tcp://%s:%d", Settings.pubAddress.c_str(), Settings.port).c_str() );
 			bool pubConnected = pubSocket->connected();
 			std::cout << Genie::stringf("Publish socket %sconnected to %s.\n", pubConnected ? "" : "not ", Genie::stringf("tcp://%s:%d", Settings.pubAddress.c_str(), Settings.port).c_str());
-			zmq::message_t zmqmsg((void *)SHUTDOWN, strlen(SHUTDOWN), freeMe);
+			char* shutdown = new char[9];
+			strcpy(shutdown, "shutdown");
+			shutdown[8] = 0;
+			Sleep(10000);
+			zmq::message_t zmqmsg((void *)shutdown, strlen(shutdown), freeMe);
 			pubSocket->send(zmqmsg);
 			if (pubSocket)
 				pubSocket->close();
