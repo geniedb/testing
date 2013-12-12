@@ -7,12 +7,11 @@ using namespace Model;
 ZmqMessage::ZmqMessage(MessageType type, char* data, size_t dataSize, uint64_t counter) {
 	this->data = data;
 	this->dataSize = dataSize;
-	if (dataSize < 12)
+	if (dataSize < 9)
 		throw("data not large enough");
 	char* ptr = data;
 	memcpy(ptr, &counter, sizeof(uint64_t));
-	ptr += 8;
-	memcpy(ptr, (type == DATA) ? "DATA" : "SHUT", 4);
+	ptr[8] = (type == DATA) ? 'D' : 'S';
 }
 
 ZmqMessage::ZmqMessage(char* data, size_t dataSize) {
@@ -25,13 +24,7 @@ ZmqMessage::~ZmqMessage() {
 }
 
 MessageType ZmqMessage::getType() {
-	char typestr[5];
-	memcpy(&typestr, (data+8), 4);
-	typestr[4] = 0;
-	if (!strcmp((const char*)&typestr, "DATA"))
-		return DATA;
-	else
-		return SHUTDOWN;
+	return (data[8] == 'D' ? DATA : SHUTDOWN);
 }
 
 size_t ZmqMessage::getDataSize() {

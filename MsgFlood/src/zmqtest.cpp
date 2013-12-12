@@ -61,23 +61,20 @@ void doSomething() {
 	for (;;) {
 		time_t currTime;
 		time(&currTime);
-		//Sleep(10000);
 		Model::Message* newMessage = NULL;
 		double runTime = difftime(currTime, startTime);
 		if (runTime > Settings.maxLifetime)
 			break;
 		try {
 			subConnected = subSocket->connected();
-			//std::cout << Genie::stringf("Subscribe socket %sconnected to %s\n", subConnected ? "" : "not ", url.c_str());
 			newMessage = subSocket->receive();
 		} catch (...) {
 			std::cout << "oops there was an exception\n";
 		}
 		if (newMessage == NULL)
 			continue;
-		std::string messageStr((char*)newMessage->getData());
-		std::cout << messageStr << "\n";
-		if (messageStr == "shutdown")
+		std::cout << (newMessage->getType() == Model::DATA ? "DATA" : "SHUTDOWN") << "\n";
+		if (newMessage->getType() == Model::SHUTDOWN)
 			break;
 	}
 	if (pubSocket) {
@@ -153,11 +150,12 @@ int main (int argc, char *argv[])
 	if (getOptions(argc, argv))
 		return 0;
 	std::cout << "Using\n";
+	std::cout << Genie::stringf("This node acting as %s\n", Settings.publisher ? "Publisher" : "Subscriber");
 	std::cout << Genie::stringf("Publish IP     : %s\n", Settings.pubAddress.c_str());
 	std::cout << Genie::stringf("Subscribe IP   : %s\n", Settings.subAddress.c_str());
 	std::cout << Genie::stringf("Publish port   : %d\n", Settings.port);
 	std::cout << Genie::stringf("High water mark: %d\n", Settings.hwm);
-	std::cout << Genie::stringf("This node acting as %s\n", Settings.publisher ? "Publisher" : "Subscriber");
+	std::cout << Genie::stringf("Protocol       : %s\n", Settings.protocol);
 
 	try {
 		if (Settings.sendKill && Settings.pubAddress != "") {
@@ -168,7 +166,6 @@ int main (int argc, char *argv[])
 			std::cout << Genie::stringf("Publish socket %sconnected to %s.\n", pubConnected ? "" : "not ", Genie::stringf("tcp://%s:%d", Settings.pubAddress.c_str(), Settings.port).c_str());
 			char* shutdown = new char[12];
 			Model::Message* message = net->createMessage(Model::SHUTDOWN, shutdown, 12, 1);
-			//Sleep(10000);
 			pubSocket->send(message);
 			if (pubSocket) {
 				pubSocket->close();
@@ -179,8 +176,8 @@ int main (int argc, char *argv[])
 		} else {
 
 			boost::thread testThread(doSomething);
-			boost::posix_time::time_duration startupPause = boost::posix_time::microseconds(500);
-			boost::this_thread::sleep(startupPause);
+			//boost::posix_time::time_duration startupPause = boost::posix_time::microseconds(500);
+			//boost::this_thread::sleep(startupPause);
 			//testThread.interrupt();
 			testThread.join();
 		}
