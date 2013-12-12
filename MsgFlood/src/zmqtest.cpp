@@ -7,9 +7,9 @@
 #include <time.h>
 #include "CF_Platform.h"
 #include "getopt.h"
-#include "Model/Net.h"
-#include "Model/NetFactory.h"
-#include "Model/Message.h"
+#include "model/Net.h"
+#include "model/NetFactory.h"
+#include "model/Message.h"
 
 const char* optString = "i:p:s:S?xt";
 
