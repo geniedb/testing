@@ -47,7 +47,7 @@ void doSomething() {
 			time_t currTime;
 			time(&currTime);
 			double runTime = difftime(currTime, startTime);
-			if (runTime - lastRunTime > 2) {
+			if (runTime - lastRunTime > 1) {
 				char* data = new char[1000];
 				Model::Message* message = net->createMessage(Model::DATA, data, 1000, count);
 				pubSocket->send(message);
