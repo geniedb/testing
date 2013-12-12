@@ -2,7 +2,7 @@
 #ifndef MESSAGE_H_
 #define MESSAGE_H_
 
-#include "CF_Platform.h"
+#include "../CF_Platform.h"
 
 namespace Model {
 

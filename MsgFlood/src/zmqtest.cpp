@@ -5,12 +5,11 @@
 #include <stdint.h>
 #include <boost/thread.hpp>
 #include <time.h>
-#include "imp.h"
 #include "CF_Platform.h"
 #include "getopt.h"
-#include "Net.h"
-#include "NetFactory.h"
-#include "Message.h"
+#include "Model/Net.h"
+#include "Model/NetFactory.h"
+#include "Model/Message.h"
 
 const char* optString = "i:p:s:S?xt";
 

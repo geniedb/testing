@@ -1,5 +1,5 @@
 #include "ZmqNet.h"
-#include "CF_Platform.h"
+#include "../CF_Platform.h"
 #include "ZmqMessage.h"
 #include "Message.h"
 
@@ -7,6 +7,10 @@ using namespace ZmqNet;
 using namespace Model;
 
 //=========== Class ZmqSocket members ===============
+//TODO tried to use multiple inheritance to make connected() and close() implement
+//virtual methods on Net level Socket classes, but had some issues. Fell back on
+//having ZmqPublishSocket and ZmqSubscribeSocket implement connected() and close()
+//but I suspect there is a solution to make this cleaner.
 
 ZmqSocket::ZmqSocket(zmq::socket_t* socket) {
 	this->socket = socket;

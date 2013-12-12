@@ -1,7 +1,7 @@
 #ifndef ZMQ_MESSAGE_H_
 #define ZMQ_MESSAGE_H_
 
-#include "CF_Platform.h"
+#include "../CF_Platform.h"
 #include "Message.h"
 
 /*

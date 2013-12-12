@@ -2,7 +2,7 @@
 #define ZMQ_NET_H_
 
 #include <string>
-#include "CF_Platform.h"
+#include "../CF_Platform.h"
 #include "zmq.hpp"
 #include "Net.h"
 
