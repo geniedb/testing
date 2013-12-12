@@ -92,6 +92,7 @@ SubscribeSocket* ZmqNetImpl::connectSubscribe(std::string subject, std::string u
 	subSocket->setsockopt(ZMQ_RCVHWM, &netSettings.receiveHighWaterMark, sizeof(netSettings.receiveHighWaterMark));
 	subSocket->setsockopt(ZMQ_LINGER, &netSettings.linger, sizeof(netSettings.linger));
 	subSocket->setsockopt(ZMQ_SUBSCRIBE, subject.c_str(), subject.length());
+	subSocket->connect(Genie::stringf("tcp://%s:%d", url.c_str(), port).c_str());
 	return (SubscribeSocket*)new ZmqSubscribeSocket(subSocket);
 }
 
