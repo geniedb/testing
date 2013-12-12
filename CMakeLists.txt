@@ -100,15 +100,16 @@ ENDMACRO()
 
 
 MACRO(IMPORT_SUBDIR project dirname)
-	MESSAGE("processing ${project}:${dirname}")
 	FILE(GLOB dir_src
 		${CMAKE_CURRENT_SOURCE_DIR}/${project}/${dirname}/*.h
 		${CMAKE_CURRENT_SOURCE_DIR}/${project}/${dirname}/*.c
 		${CMAKE_CURRENT_SOURCE_DIR}/${project}/${dirname}/*.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/${project}/${dirname}/*.hpp
 	)
+	MESSAGE("creating source group ${dirname}")
 	SOURCE_GROUP(${dirname} FILES ${dir_src})
-	SUBDIRLIST(subdirs ${CMAKE_CURRENT_SOURCE_DIR}/${project}/${dirname})
+	FILE(TO_CMAKE_PATH ${dirname} native)
+	SUBDIRLIST(subdirs ${CMAKE_CURRENT_SOURCE_DIR}/${project}/${native})
 	FOREACH(subdir ${subdirs})
 		IMPORT_SUBDIR(${project} ${dirname}\\\\${subdir})
 	ENDFOREACH(subdir)
