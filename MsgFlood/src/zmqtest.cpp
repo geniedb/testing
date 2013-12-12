@@ -63,7 +63,7 @@ void doSomething() {
 		time(&currTime);
 		//Sleep(10000);
 		Model::Message* newMessage = NULL;
-		double runTime = difftime(startTime, currTime);
+		double runTime = difftime(currTime, startTime);
 		if (runTime > Settings.maxLifetime)
 			break;
 		try {
@@ -168,7 +168,7 @@ int main (int argc, char *argv[])
 			std::cout << Genie::stringf("Publish socket %sconnected to %s.\n", pubConnected ? "" : "not ", Genie::stringf("tcp://%s:%d", Settings.pubAddress.c_str(), Settings.port).c_str());
 			char* shutdown = new char[12];
 			Model::Message* message = net->createMessage(Model::SHUTDOWN, shutdown, 12, 1);
-			Sleep(10000);
+			//Sleep(10000);
 			pubSocket->send(message);
 			if (pubSocket) {
 				pubSocket->close();
