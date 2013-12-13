@@ -47,7 +47,6 @@ bool RateListenPlan::execute() {
 				leftThisSecond--;
 				delete message->getData();
 				delete message;
-				continue;
 			}
 		}
 		absolute_time currTime = GetAbsoluteTime();

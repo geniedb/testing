@@ -17,6 +17,7 @@ struct Settings_t {
 	std::string plan;
 	size_t rate;
 	size_t bytes;
+	size_t targetHighWaterMark;
 };
 
 struct NetSettings {

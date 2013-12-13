@@ -12,7 +12,7 @@
 #include "model/Message.h"
 #include "controller/Plan.h"
 
-const char* optString = "i:p:s:S?xm:P:r:b:h:";
+const char* optString = "i:p:s:S?xm:P:r:b:h:t:";
 
 void print_usage() {
 	std::cout << "usage:\n";
@@ -25,6 +25,7 @@ void print_usage() {
 	std::cout << "-r:        : rate to send or receive. used by some plans\n";
 	std::cout << "-b:        : size of messages to send. used by some plans\n";
 	std::cout << "-h:        : high water mark\n";
+	std::cout << "-t:        : target high water mark\n";
 	std::cout << "Plans:\n";
 	std::cout << "     terminate: Publisher. Sends a terminate message\n";
 	std::cout << "     ratesend : Publisher. Sends messages of size/rate specified\n";
@@ -44,6 +45,7 @@ int getOptions(Model::Settings_t& settings, int argc, char *argv[]) {
 	settings.sendKill = false;
 	settings.maxLifetime = 180;
 	settings.hwm = 100000;
+	settings.targetHighWaterMark = 50000;
 	settings.rate = 1;
 	settings.bytes = 9;
 	settings.protocol = ZMQ_PROTOCOL;
@@ -88,6 +90,9 @@ int getOptions(Model::Settings_t& settings, int argc, char *argv[]) {
 			case 'h':
 				settings.hwm = atoi(optarg);
 				break;
+			case 't':
+				settings.targetHighWaterMark = atoi(optarg);
+				break;
         }        
         opt = getopt( argc, argv, optString );
     }
@@ -114,6 +119,7 @@ int main (int argc, char *argv[])
 	std::cout << Genie::stringf("Subscribe IP   : %s\n", settings.subAddress.c_str());
 	std::cout << Genie::stringf("Publish port   : %d\n", settings.port);
 	std::cout << Genie::stringf("High water mark: %d\n", settings.hwm);
+	std::cout << Genie::stringf("Target HWM     : %d\n", settings.targetHighWaterMark);
 	std::cout << Genie::stringf("Protocol       : %s\n", settings.protocol);
 	std::cout << Genie::stringf("Rate           : %d\n", settings.rate);
 	std::cout << Genie::stringf("Size(bytes)    : %d\n", settings.bytes);

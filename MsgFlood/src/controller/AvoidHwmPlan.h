@@ -14,6 +14,7 @@ private:
 	uint64_t count;
 	uint64_t countInSecond;
 	uint64_t writeRate;
+	uint64_t lastHbCount;
 	void applyFeedback(Model::Message* hbMessage);
 	void sendNextMessage();
 public:
