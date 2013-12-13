@@ -26,7 +26,7 @@ void print_usage() {
 	std::cout << "-b:        : size of messages to send. used by some plans\n";
 	std::cout << "Plans:\n";
 	std::cout << "	terminate: connects to pub socket and sends a terminate message\n";
-	std::cout << "	slowsend: connects to pub socket and sends 1 data message/second\n";
+	std::cout << "	ratesend : connects to pub socket and sends messages of size/rate specified\n";
 }
 
 const char* ZMQ_PROTOCOL = "zmq";
@@ -39,6 +39,8 @@ int getOptions(Model::Settings_t& settings, int argc, char *argv[]) {
 	settings.sendKill = false;
 	settings.maxLifetime = 180;
 	settings.hwm = 100000;
+	settings.rate = 1;
+	settings.bytes = 9;
 	settings.protocol = ZMQ_PROTOCOL;
 	int opt = getopt(argc, argv, optString);
     while( opt != -1 ) {
@@ -69,10 +71,14 @@ int getOptions(Model::Settings_t& settings, int argc, char *argv[]) {
 				settings.plan = optarg;
 				break;
 			case 'r':
-				settings.rate = atol(optarg);
+				settings.rate = atoi(optarg);
+				if (settings.rate < 1)
+					settings.rate = 1;
 				break;
 			case 'b':
-				settings.size = atol(optarg);
+				settings.bytes = atoi(optarg);
+				if (settings.bytes < 9)
+					settings.bytes = 9;
 				break;
         }        
         opt = getopt( argc, argv, optString );
@@ -101,6 +107,8 @@ int main (int argc, char *argv[])
 	std::cout << Genie::stringf("Publish port   : %d\n", settings.port);
 	std::cout << Genie::stringf("High water mark: %d\n", settings.hwm);
 	std::cout << Genie::stringf("Protocol       : %s\n", settings.protocol);
+	std::cout << Genie::stringf("Rate           : %d\n", settings.rate);
+	std::cout << Genie::stringf("Size(bytes)    : %d\n", settings.bytes);
 	std::cout << Genie::stringf("Plan           : %s\n", settings.plan.c_str());
 
 	try {

@@ -16,7 +16,7 @@ struct Settings_t {
 	const char* protocol;
 	std::string plan;
 	size_t rate;
-	size_t size;
+	size_t bytes;
 };
 
 struct NetSettings {

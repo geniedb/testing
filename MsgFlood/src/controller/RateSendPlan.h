@@ -5,9 +5,9 @@
 
 namespace Controller {
 	
-class SlowSendPlan : public SendOnlyPlan {
+class RateSendPlan : public SendOnlyPlan {
 public:
-	SlowSendPlan(Model::Settings_t& settings): SendOnlyPlan(settings) {}
+	RateSendPlan(Model::Settings_t& settings): SendOnlyPlan(settings) {}
 	virtual bool execute();
 };
 
