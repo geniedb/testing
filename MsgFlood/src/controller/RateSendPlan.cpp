@@ -48,6 +48,7 @@ bool RateSendPlan::execute() {
 				leftThisSecond--;
 			}
 			leftThisSecond = settings.rate;
+			startOfSecond = currTime;
 		}
 	}
 	return true;

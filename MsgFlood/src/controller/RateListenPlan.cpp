@@ -61,6 +61,7 @@ bool RateListenPlan::execute() {
 				}
 			}
 			leftThisSecond = settings.rate;
+			startOfSecond = currTime;
 			std::cout << count << " messages received\n";
 			count = 0;
 		}
