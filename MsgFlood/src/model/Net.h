@@ -4,6 +4,20 @@
 #include "Message.h"
 
 namespace Model {
+	
+struct Settings_t {
+	std::string pubAddress;
+	uint16_t port;
+	std::string subAddress;
+	bool publisher;
+	bool sendKill;
+	double maxLifetime;
+	int hwm;
+	const char* protocol;
+	std::string plan;
+	size_t rate;
+	size_t size;
+};
 
 struct NetSettings {
 	int sendHighWaterMark;
