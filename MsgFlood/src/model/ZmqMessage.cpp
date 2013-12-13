@@ -20,7 +20,7 @@ ZmqMessage::ZmqMessage(char* data, size_t dataSize) {
 }
 
 ZmqMessage::~ZmqMessage() {
-	delete data;
+	//delete data;
 }
 
 MessageType ZmqMessage::getType() {

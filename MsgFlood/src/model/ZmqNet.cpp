@@ -38,7 +38,9 @@ void freeMe(void* message, void* hint) {
 
 bool ZmqPublishSocket::send(Message* message) {
 	zmq::message_t msg(message->getData(), message->getDataSize(), freeMe);
-	return socket->send(msg);
+	bool result = socket->send(msg);
+	delete message;
+	return result;
 }
 
 bool ZmqPublishSocket::connected() {

@@ -15,7 +15,7 @@ bool RateSendPlan::execute() {
 	size_t leftThisTenth = msgsPerTenth;
 	absolute_time startOfSecond = GetAbsoluteTime();
 	absolute_time startOfTenth = startOfSecond;
-	int count = 1;
+	uint64_t count = 1;
 	for (;;) {
 		boost::this_thread::interruption_point();
 		if (leftThisTenth > 0) {
