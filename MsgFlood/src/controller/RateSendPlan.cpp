@@ -20,7 +20,7 @@ bool RateSendPlan::execute() {
 		boost::this_thread::interruption_point();
 		if (leftThisTenth > 0) {
 			char* data = new char[settings.bytes];
-			Model::Message* message = net->createMessage(Model::DATA, data, settings.bytes, count++);
+			Message* message = net->createMessage(Model::DATA, data, settings.bytes, count++);
 			if (count % settings.rate == 0)
 				std::cout << count << " messages sent\n";
 			pubSocket->send(message);
@@ -41,7 +41,7 @@ bool RateSendPlan::execute() {
 			//might be 1 message left over, if rate is less than 10
 			if (leftThisSecond > 0) {
 				char* data = new char[settings.bytes];
-				Model::Message* message = net->createMessage(Model::DATA, data, settings.bytes, count++);
+				Message* message = net->createMessage(Model::DATA, data, settings.bytes, count++);
 				if (count % settings.rate == 0)
 					std::cout << count << " messages sent\n";
 				pubSocket->send(message);
@@ -49,17 +49,6 @@ bool RateSendPlan::execute() {
 			}
 			leftThisSecond = settings.rate;
 		}
-
-		/*if (runTime > 1000) {
-			char* data = new char[settings.bytes];
-			Model::Message* message = net->createMessage(Model::DATA, data, settings.bytes, count);
-			pubSocket->send(message);
-			std::cout << "sending msg " << count++ << "\n";
-			lastTime = currTime;
-		} else {
-			boost::posix_time::time_duration startupPause = boost::posix_time::microseconds(10);
-			boost::this_thread::sleep(startupPause);
-		}*/
 	}
 	return true;
 }
