@@ -37,7 +37,6 @@ void AvoidHwmPlan::sendNextMessage() {
 		Message* newMessage = net->createMessage(DATA, data, settings.bytes, ++count);
 		countInSecond++;
 		pubSocket->send(newMessage);
-		delete newMessage;
 		sendInTenthAllotment--;
 		return;
 	}

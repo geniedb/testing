@@ -39,7 +39,6 @@ void TwoWayPlan::sendHeartbeat(uint64_t counterAccepted) {
 	char* data = new char[10];
 	Message* hb = net->createMessage(DATA, data, 10, counterAccepted);
 	pubSocket->send(hb);
-	delete hb;
 }
 
 }
