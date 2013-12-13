@@ -28,6 +28,7 @@ void AvoidHwmPlan::applyFeedback(Message* hbMessage) {
 		writeRate = (settings.hwm - subscriberBehind) * 0.95;
 		if (writeRate < 0)
 			writeRate == 0;
+		//std::cout << "write rate set: " << writeRate << std::endl;
 	}
 }
 
@@ -38,13 +39,16 @@ void AvoidHwmPlan::sendNextMessage() {
 		countInSecond++;
 		pubSocket->send(newMessage);
 		sendInTenthAllotment--;
+		//std::cout << sendInTenthAllotment << std::endl;
 		return;
 	}
 	absolute_time currentTime = GetAbsoluteTime();
 	int64_t timeUsed = GetTimeDurationMillisecs(tenthStartTime, currentTime);
+	//std::cout << "timeUsed: " << timeUsed << std::endl;
 	if (timeUsed > 100) {
 		tenthStartTime = currentTime;
 		sendInTenthAllotment = writeRate / 10;
+		//std::cout << "allotment: " << sendInTenthAllotment << std::endl;
 	}
 	timeUsed = GetTimeDurationMillisecs(secondStartTime, currentTime);
 	if (timeUsed > 1000) {

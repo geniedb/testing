@@ -61,7 +61,7 @@ ZmqSubscribeSocket::ZmqSubscribeSocket(zmq::socket_t* socket) : ZmqSocket(socket
 }
 
 Message* ZmqSubscribeSocket::receive() {
-	int pollCount = zmq::poll(&pollitem, 1, 100);
+	int pollCount = zmq::poll(&pollitem, 1, 0);
 	if (pollCount > 0) {
 		zmq::message_t msg;
 		socket->recv(&msg);
