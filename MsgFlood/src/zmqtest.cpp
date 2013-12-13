@@ -12,7 +12,7 @@
 #include "model/Message.h"
 #include "controller/Plan.h"
 
-const char* optString = "i:p:s:S?xm:P:r:b:";
+const char* optString = "i:p:s:S?xm:P:r:b:h:";
 
 void print_usage() {
 	std::cout << "usage:\n";
@@ -24,6 +24,7 @@ void print_usage() {
 	std::cout << "-P:        : plan to execute\n";
 	std::cout << "-r:        : rate to send or receive. used by some plans\n";
 	std::cout << "-b:        : size of messages to send. used by some plans\n";
+	std::cout << "-h:        : high water mark\n";
 	std::cout << "Plans:\n";
 	std::cout << "     terminate: Publisher. Sends a terminate message\n";
 	std::cout << "     ratesend : Publisher. Sends messages of size/rate specified\n";
@@ -82,6 +83,9 @@ int getOptions(Model::Settings_t& settings, int argc, char *argv[]) {
 				settings.bytes = atoi(optarg);
 				if (settings.bytes < 9)
 					settings.bytes = 9;
+				break;
+			case 'h':
+				settings.hwm = atoi(optarg);
 				break;
         }        
         opt = getopt( argc, argv, optString );
