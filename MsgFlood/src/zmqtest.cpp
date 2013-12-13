@@ -30,7 +30,8 @@ void print_usage() {
 	std::cout << "     ratesend : Publisher. Sends messages of size/rate specified\n";
 	std::cout << "     reportevery : Subscriber. Reports every [rate] messages it receives\n";
 	std::cout << "     ratelisten : Subscriber. Reads at specified rate, reports msg/s\n";
-
+	std::cout << "     avoidhwm : Two Way. Uses heartbeats to adjust it's write rate so as to avoid HWM\n";
+	std::cout << "                Use with ratelisten on other node\n";
 }
 
 const char* ZMQ_PROTOCOL = "zmq";

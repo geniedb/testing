@@ -22,6 +22,8 @@ Message* RateListenPlan::getMessage() {
 			totalCount = 0;
 		}
 		expected = result->getCounter() + 1;
+		if (totalCount % 1000 == 0)
+			sendHeartbeat(result->getCounter());
 	}
 	return result;
 }
@@ -72,6 +74,7 @@ bool RateListenPlan::execute() {
 			if (count > 0)
 				std::cout << count << " messages received\n";
 			count = 0;
+			sendHeartbeat(expected);
 		}
 	}
 	return true;
