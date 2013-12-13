@@ -28,6 +28,8 @@ void print_usage() {
 	std::cout << "     terminate: Publisher. Sends a terminate message\n";
 	std::cout << "     ratesend : Publisher. Sends messages of size/rate specified\n";
 	std::cout << "     reportevery : Subscriber. Reports every [rate] messages it receives\n";
+	std::cout << "     ratelisten : Subscriber. Reads at specified rate, reports msg/s\n";
+
 }
 
 const char* ZMQ_PROTOCOL = "zmq";

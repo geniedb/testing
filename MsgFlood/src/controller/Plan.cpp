@@ -2,6 +2,7 @@
 #include "TerminatePlan.h"
 #include "RateSendPlan.h"
 #include "ReportEveryPlan.h"
+#include "RateListenPlan.h"
 
 using namespace Model;
 
@@ -14,6 +15,8 @@ Plan* getPlan(Settings_t& settings) {
 		return new RateSendPlan(settings);
 	else if (settings.plan == "reportevery")
 		return new ReportEveryPlan(settings);
+	else if (settings.plan == "ratelisten")
+		return new RateListenPlan(settings);
 	return NULL;
 }
 
