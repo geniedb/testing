@@ -11,6 +11,7 @@ namespace Controller {
 Message* RateListenPlan::getMessage() {
 	Message* result = subSocket->receive();
 	if (result != NULL) {
+		count++;
 		if (expected == 0)
 			expected = result->getCounter();
 		if (result->getCounter() != expected) 
@@ -28,7 +29,7 @@ bool RateListenPlan::execute() {
 	expected = 0;
 	absolute_time startOfSecond = GetAbsoluteTime();
 	absolute_time startOfTenth = startOfSecond;
-	uint64_t count = 0;
+	count = 0;
 	for (;;) {
 		boost::this_thread::interruption_point();
 		if (leftThisTenth > 0) {

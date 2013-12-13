@@ -8,6 +8,7 @@ namespace Controller {
 class RateListenPlan : public ListenOnlyPlan {
 private:
 	uint64_t expected;
+	uint64_t count;
 	Model::Message* getMessage();
 public:
 	RateListenPlan(Model::Settings_t& settings): ListenOnlyPlan(settings) {}
