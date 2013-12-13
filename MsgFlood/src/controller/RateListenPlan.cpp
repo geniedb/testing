@@ -12,10 +12,15 @@ Message* RateListenPlan::getMessage() {
 	Message* result = subSocket->receive();
 	if (result != NULL) {
 		count++;
+		totalCount++;
 		if (expected == 0)
 			expected = result->getCounter();
-		if (result->getCounter() != expected) 
-			std::cout << "message drop detected. expected " << expected << " got " << result->getCounter() << "\n";
+		if (result->getCounter() != expected) {
+			std::cout << "message drop detected. expected " << expected << " got " << result->getCounter();
+			std::cout << " skipped " << (result->getCounter() - expected) << "\n";
+			std::cout << "total count this bucket: " << totalCount << std::endl;
+			totalCount = 0;
+		}
 		expected = result->getCounter() + 1;
 	}
 	return result;
@@ -30,6 +35,7 @@ bool RateListenPlan::execute() {
 	absolute_time startOfSecond = GetAbsoluteTime();
 	absolute_time startOfTenth = startOfSecond;
 	count = 0;
+	totalCount = 0;
 	for (;;) {
 		boost::this_thread::interruption_point();
 		if (leftThisTenth > 0) {
@@ -63,7 +69,8 @@ bool RateListenPlan::execute() {
 			}
 			leftThisSecond = settings.rate;
 			startOfSecond = currTime;
-			std::cout << count << " messages received\n";
+			if (count > 0)
+				std::cout << count << " messages received\n";
 			count = 0;
 		}
 	}
