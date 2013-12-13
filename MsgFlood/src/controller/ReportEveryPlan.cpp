@@ -10,6 +10,7 @@ namespace Controller {
 		
 bool ReportEveryPlan::execute() {
 	uint64_t count = 0;
+	uint64_t startCount = 0;
 	uint64_t expecting = 0;
 	absolute_time startOfPeriod = GetAbsoluteTime();
 	for (;;) {
@@ -22,8 +23,9 @@ bool ReportEveryPlan::execute() {
 			if (count % settings.rate == 0) {
 				absolute_time endOfPeriod = GetAbsoluteTime();
 				int64_t duration = GetTimeDurationMillisecs(startOfPeriod, endOfPeriod);
+				std::cout << count << " messages received. write rate: " << (count - startCount) / duration * 1000 << std::endl;
 				startOfPeriod = endOfPeriod;
-				std::cout << count << " messages received. write rate: " << count / duration * 1000 << std::endl;
+				startCount = count;
 			}
 			if (newMessage->getCounter() != expecting) {
 				std::cout << "message drop detected. expected " << expecting << " got " << newMessage->getCounter() << "\n";
