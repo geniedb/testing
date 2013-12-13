@@ -13,9 +13,9 @@ bool ListenOnlyPlan::setup() {
 	netSettings.sendHighWaterMark = settings.hwm;
 	netSettings.receiveHighWaterMark = settings.hwm;
 	netSettings.linger = -1;
-	subSocket = net->connectSubscribe("", settings.pubAddress, settings.port, netSettings);
-	bool pubConnected = subSocket->connected();
-	std::cout << Genie::stringf("Publish socket %sconnected to %s\n", pubConnected ? "" : "not ", Genie::stringf("tcp://%s:%d", settings.pubAddress.c_str(), settings.port).c_str());
+	subSocket = net->connectSubscribe("", settings.subAddress, settings.port, netSettings);
+	bool subConnected = subSocket->connected();
+	std::cout << Genie::stringf("Subscribe socket %sconnected to %s\n", subConnected ? "" : "not ", Genie::stringf("tcp://%s:%d", settings.subAddress.c_str(), settings.port).c_str());
 	return true;
 }
 
